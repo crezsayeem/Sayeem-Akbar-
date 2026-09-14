@@ -955,34 +955,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (reduceMotion) return;
 
-  // Custom cursor ring
-  if (window.matchMedia("(pointer:fine)").matches) {
-    const ring = document.createElement("div");
-    ring.className = "cursor-ring";
-    document.body.appendChild(ring);
-
-    let mx = innerWidth / 2, my = innerHeight / 2;
-    let rx = mx, ry = my;
-
-    window.addEventListener("pointermove", e => {
-      mx = e.clientX; my = e.clientY;
-    }, {passive:true});
-
-    const cursorLoop = () => {
-      rx += (mx-rx)*.18;
-      ry += (my-ry)*.18;
-      ring.style.left = rx + "px";
-      ring.style.top = ry + "px";
-      requestAnimationFrame(cursorLoop);
-    };
-    cursorLoop();
-
-    document.querySelectorAll("a,button,.skill-tag,.competency-card,.project-card,.award-item,.experience-item").forEach(el => {
-      el.addEventListener("mouseenter",()=>ring.classList.add("active"));
-      el.addEventListener("mouseleave",()=>ring.classList.remove("active"));
-    });
-  }
-
   // Magnetic buttons / tags
   document.querySelectorAll(".btn,.nav-hire,.availability-badge").forEach(el => {
     el.addEventListener("pointermove", e => {
@@ -1055,51 +1027,147 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 
 
-/* ===== Cinematic cursor controller ===== */
+/* ===== Single cinematic cursor controller ===== */
 (function cinematicCursor(){
   if (!window.matchMedia('(pointer: fine)').matches) return;
-
-  const core = document.createElement('div');
-  core.className = 'cursor-core';
   const orbit = document.createElement('div');
   orbit.className = 'cursor-orbit';
-  document.body.append(core, orbit);
-
-  let x = innerWidth/2, y = innerHeight/2;
-  let ox = x, oy = y;
-  let lastParticle = 0;
-
-  window.addEventListener('mousemove', e => {
-    x = e.clientX; y = e.clientY;
-    core.style.transform = `translate3d(${x}px,${y}px,0) translate(-50%,-50%)`;
-    if (performance.now() - lastParticle > 55) {
-      lastParticle = performance.now();
-      const p = document.createElement('span');
-      p.className = 'cursor-particle';
-      p.style.left = x + 'px'; p.style.top = y + 'px';
-      p.style.setProperty('--dx', `${(Math.random()-.5)*28}px`);
-      p.style.setProperty('--dy', `${(Math.random()-.5)*28}px`);
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), 700);
-    }
-  }, {passive:true});
-
-  const tick = () => {
-    ox += (x-ox) * .16;
-    oy += (y-oy) * .16;
-    orbit.style.transform = `translate3d(${ox}px,${oy}px,0) translate(-50%,-50%)`;
+  document.body.appendChild(orbit);
+  let x = innerWidth/2, y = innerHeight/2, ox=x, oy=y;
+  window.addEventListener('mousemove', e => { x=e.clientX; y=e.clientY; }, {passive:true});
+  const tick=()=>{
+    ox += (x-ox)*.2; oy += (y-oy)*.2;
+    orbit.style.transform=`translate3d(${ox}px,${oy}px,0) translate(-50%,-50%)`;
     requestAnimationFrame(tick);
-  };
-  tick();
+  }; tick();
+  document.querySelectorAll('a,button,.btn,.nav-link,.skill-tag,.project-card,.experience-main,.filter-btn').forEach(el=>{
+    el.addEventListener('mouseenter',()=>orbit.classList.add('is-hover'));
+    el.addEventListener('mouseleave',()=>orbit.classList.remove('is-hover'));
+  });
+})();
 
-  const refresh = () => {
-    document.querySelectorAll('a, button, .btn, .nav-link, .skill-tag, .project-card, .experience-card, .timeline-card').forEach(el => {
-      if (el.dataset.cursorBound) return;
-      el.dataset.cursorBound = '1';
-      el.addEventListener('mouseenter', () => orbit.classList.add('is-hover'));
-      el.addEventListener('mouseleave', () => orbit.classList.remove('is-hover'));
+/* =========================================================
+   CINEMATIC MICRO-INTERACTIONS
+========================================================= */
+(() => {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) return;
+
+  // Add a soft pointer spotlight layer if the markup has no usable one.
+  let spot = document.querySelector(".pointer-spot");
+  if (!spot) {
+    spot = document.createElement("div");
+    spot.className = "pointer-spot";
+    Object.assign(spot.style,{
+      position:"fixed", left:"50%", top:"50%", transform:"translate(-50%,-50%)",
+      pointerEvents:"none", zIndex:"0"
+    });
+    document.body.prepend(spot);
+  }
+
+  // Section cards get a subtle mouse-follow sheen.
+  const cards = document.querySelectorAll(
+    ".competency-card,.certification-card,.award-item,.project-card,.experience-main,.contact-form-wrapper"
+  );
+  if (window.matchMedia("(pointer:fine)").matches) {
+    cards.forEach(card => {
+      card.addEventListener("pointermove", e => {
+        const r = card.getBoundingClientRect();
+        const x = ((e.clientX-r.left)/r.width)*100;
+        const y = ((e.clientY-r.top)/r.height)*100;
+        card.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(184,255,0,.055), transparent 42%), rgba(255,255,255,.012)`;
+      });
+      card.addEventListener("pointerleave", () => {
+        card.style.background = "";
+      });
+    });
+  }
+
+  // Slight heading letter reveal.
+  document.querySelectorAll(".section-title,.hero-headline,.contact-title").forEach(el=>{
+    el.style.willChange="transform";
+    const base = el.style.transform;
+    el.addEventListener("pointermove",e=>{
+      const r=el.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width-.5;
+      const py=(e.clientY-r.top)/r.height-.5;
+      el.style.transform=`translate3d(${px*3}px,${py*2}px,0)`;
+    });
+    el.addEventListener("pointerleave",()=>el.style.transform=base);
+  });
+})();
+
+/* Timeline motion polish */
+(() => {
+  const items = document.querySelectorAll('.cinematic-timeline .experience-item');
+  items.forEach((item, i) => item.style.transitionDelay = `${i * 80}ms`);
+})();
+
+
+/* ===== Journey filter + scroll choreography ===== */
+document.addEventListener('DOMContentLoaded',()=>{
+  const list=document.querySelector('.cinematic-timeline');
+  if(!list) return;
+  const items=[...list.querySelectorAll('.experience-item')];
+  const buttons=[...document.querySelectorAll('.experience-filters .filter-btn')];
+  const apply=(filter)=>{
+    items.forEach((item,i)=>{
+      const show=filter==='all'||item.dataset.category===filter;
+      item.classList.toggle('hidden',!show);
+      if(show){ item.style.animationDelay=`${Math.min(i*80,320)}ms`; }
     });
   };
-  refresh();
-  new MutationObserver(refresh).observe(document.body, {childList:true, subtree:true});
+  buttons.forEach(btn=>btn.addEventListener('click',()=>apply(btn.dataset.filter)));
+  apply('all');
+
+  if('IntersectionObserver' in window){
+    const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+      if(e.isIntersecting) e.target.classList.add('journey-in-view');
+    }),{threshold:.22,rootMargin:'0px 0px -12% 0px'});
+    items.forEach(i=>obs.observe(i));
+  }
+});
+
+
+
+/* --- Single animated mouse cursor --- */
+(() => {
+  if (window.matchMedia("(pointer:coarse)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const cursor = document.createElement("div");
+  cursor.className = "cinematic-cursor";
+  document.body.appendChild(cursor);
+
+  let targetX = -100, targetY = -100;
+  let currentX = targetX, currentY = targetY;
+
+  window.addEventListener("pointermove", (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+    cursor.classList.add("is-visible");
+  }, {passive:true});
+
+  const interactive = [
+    "a","button","input","textarea","select",
+    ".btn",".skill-tag",".nav-link",
+    ".competency-card",".certification-card",
+    ".experience-main",".project-card",".award-item"
+  ].join(",");
+
+  document.addEventListener("pointerover", (e) => {
+    if (e.target.closest(interactive)) cursor.classList.add("is-hover");
+  });
+  document.addEventListener("pointerout", (e) => {
+    if (e.target.closest(interactive)) cursor.classList.remove("is-hover");
+  });
+
+  function animate(){
+    currentX += (targetX-currentX)*0.18;
+    currentY += (targetY-currentY)*0.18;
+    cursor.style.transform =
+      `translate3d(${currentX}px,${currentY}px,0)`;
+    requestAnimationFrame(animate);
+  }
+  animate();
 })();
