@@ -1226,3 +1226,434 @@ input,textarea,select,button{max-width:100%}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* =========================================================
+   FINAL PERFORMANCE + RESPONSIVE PASS
+   Optimized for phone / tablet / laptop / desktop
+========================================================= */
+
+/* Keep the first paint cheap */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeSpeed;
+}
+
+body {
+  overflow-x: clip;
+}
+
+/* Off-screen sections do not consume rendering time until needed. */
+main > section:not(#home) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
+}
+
+/* Only animated elements get compositor hints. */
+.cinematic-cursor,
+.hero-grid,
+.hero-glow-one,
+.hero-glow-two,
+.profile-card {
+  backface-visibility: hidden;
+}
+
+/* Reduce the cost of large decorative effects on medium screens. */
+@media (max-width: 1200px) {
+  .container {
+    width: min(94%, 1160px);
+  }
+
+  .hero-grid {
+    animation: none !important;
+  }
+
+  .hero-glow,
+  .hero-glow-one,
+  .hero-glow-two {
+    animation: none !important;
+  }
+
+  .profile-image-glow {
+    filter: blur(45px) !important;
+  }
+
+  .site-header,
+  .motion-rail,
+  .hero-location,
+  .profile-card,
+  .experience-main {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .motion-rail {
+    right: 12px;
+  }
+
+  .project-card:hover,
+  .competency-card:hover,
+  .award-item:hover,
+  .education-item:hover,
+  .experience-item:hover,
+  .certification-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  html {
+    scroll-padding-top: 82px;
+  }
+
+  .container {
+    width: min(92%, 850px);
+  }
+
+  .section {
+    padding: 82px 0;
+  }
+
+  .hero-section {
+    padding-top: 118px;
+  }
+
+  .hero-container,
+  .about-grid,
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-profile {
+    min-height: 510px;
+  }
+
+  .profile-card {
+    max-width: 470px;
+    transform: none !important;
+  }
+
+  .profile-card:hover {
+    transform: none !important;
+  }
+
+  .profile-image-wrapper {
+    height: 500px;
+  }
+
+  .motion-rail {
+    display: none !important;
+  }
+
+  /* Kill expensive decorative filters on touch/tablet. */
+  .hero-glow,
+  .hero-glow-one,
+  .hero-glow-two,
+  .profile-image-glow,
+  .pointer-spot {
+    filter: none !important;
+    opacity: .07 !important;
+  }
+
+  .cinematic-timeline:before {
+    animation: none !important;
+    box-shadow: none !important;
+  }
+
+  .cinematic-timeline .experience-item {
+    width: 100% !important;
+    min-height: 0;
+    will-change: auto;
+    animation: none !important;
+  }
+
+  .cinematic-timeline .experience-item:after {
+    animation: none !important;
+    box-shadow: 0 0 10px rgba(184,255,0,.4) !important;
+  }
+
+  .cinematic-timeline .experience-main {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Faster reveal on tablets. */
+  .reveal-up {
+    transition-duration: .38s !important;
+    transform: translateY(12px);
+  }
+}
+
+/* Phones */
+@media (max-width: 700px) {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 74px;
+  }
+
+  body {
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  .container {
+    width: min(calc(100% - 32px), 620px);
+  }
+
+  .section {
+    padding: 68px 0;
+  }
+
+  .section-header {
+    margin-bottom: 34px;
+  }
+
+  .hero {
+    padding-top: 104px;
+    padding-bottom: 64px;
+  }
+
+  .hero-section {
+    padding-top: 104px;
+  }
+
+  .hero-container {
+    gap: 42px !important;
+  }
+
+  .hero-title,
+  .hero-headline {
+    font-size: clamp(40px, 12.8vw, 64px) !important;
+    line-height: .96;
+  }
+
+  .hero-description,
+  .about-description,
+  .experience-description,
+  .education-description,
+  .project-description,
+  .contact-description {
+    line-height: 1.68;
+  }
+
+  .hero-actions,
+  .cta-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .hero-actions .btn,
+  .cta-actions .btn,
+  .contact-form .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .profile-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 8px;
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(0,0,0,.35);
+    background: #0b0d0a;
+  }
+
+  .profile-image-wrapper,
+  .profile-card-image {
+    height: 420px;
+    min-height: 0;
+  }
+
+  .profile-image {
+    filter: grayscale(.12) contrast(1.03) !important;
+    transition: none !important;
+  }
+
+  .profile-card:hover .profile-image {
+    transform: none !important;
+    filter: grayscale(.12) contrast(1.03) !important;
+  }
+
+  .hero-profile::before,
+  .hero-profile::after,
+  .profile-image-glow,
+  .pointer-spot,
+  .cinematic-cursor {
+    display: none !important;
+  }
+
+  .main-navigation {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: #070807 !important;
+  }
+
+  .experience-item,
+  .education-item {
+    grid-template-columns: 1fr !important;
+  }
+
+  .experience-item {
+    gap: 12px !important;
+  }
+
+  .cinematic-timeline {
+    padding-top: 20px !important;
+  }
+
+  .cinematic-timeline:before {
+    display: none !important;
+  }
+
+  .cinematic-timeline .experience-item::after {
+    display: none !important;
+  }
+
+  .cinematic-timeline .experience-main:after {
+    display: none !important;
+  }
+
+  .project-card:hover,
+  .competency-card:hover,
+  .award-item:hover,
+  .education-item:hover,
+  .experience-item:hover,
+  .certification-card:hover,
+  .btn:hover,
+  .skill-tag:hover {
+    transform: none !important;
+    box-shadow: none;
+  }
+
+  .project-image img {
+    transition: none !important;
+  }
+
+  .project-card:hover .project-image img {
+    transform: none !important;
+  }
+
+  /* No hover cursor system on touch. */
+  html, body, body * {
+    cursor: auto !important;
+  }
+
+  .reveal-up {
+    transition: opacity .32s ease, transform .32s ease !important;
+    transform: translateY(8px);
+  }
+
+  /* Prevent animation-delay from making mobile feel slow. */
+  .reveal-up,
+  .competency-grid > *,
+  .competencies-grid > *,
+  .certification-grid > *,
+  .certifications-grid > *,
+  .projects-grid > *,
+  .awards-grid > * {
+    transition-delay: 0ms !important;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .container {
+    width: calc(100% - 28px);
+  }
+
+  .section {
+    padding: 58px 0;
+  }
+
+  .section-title {
+    font-size: clamp(30px, 9vw, 38px);
+  }
+
+  .hero-title,
+  .hero-headline {
+    font-size: clamp(38px, 13.5vw, 56px) !important;
+  }
+
+  .profile-image-wrapper,
+  .profile-card-image {
+    height: 350px;
+  }
+
+  .profile-card-content {
+    left: 22px;
+    right: 22px;
+    bottom: 52px;
+  }
+
+  .profile-status {
+    left: 22px;
+    bottom: 18px;
+  }
+
+  .contact-form {
+    padding: 18px !important;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+  .container {
+    width: calc(100% - 24px);
+  }
+
+  .hero-title,
+  .hero-headline {
+    font-size: 37px !important;
+  }
+
+  .section-title {
+    font-size: 29px;
+  }
+
+  .profile-image-wrapper,
+  .profile-card-image {
+    height: 310px;
+  }
+}
+
+/* Accessibility + low-power mode */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .reveal-up {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Devices that explicitly have no hover: never spend time on hover effects. */
+@media (hover: none), (pointer: coarse) {
+  .cinematic-cursor,
+  .pointer-spot,
+  .cursor-ring,
+  .cursor-orbit,
+  .cursor-core,
+  .cursor-particle {
+    display: none !important;
+  }
+
+  .project-card:hover,
+  .competency-card:hover,
+  .award-item:hover,
+  .education-item:hover,
+  .experience-item:hover,
+  .certification-card:hover,
+  .profile-card:hover {
+    transform: none !important;
+  }
+}
