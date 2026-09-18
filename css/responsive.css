@@ -1178,3 +1178,51 @@ table {
 /* =========================================================
    END OF RESPONSIVE.CSS
    ========================================================= */
+
+/* Final responsive safety layer */
+*,*::before,*::after{box-sizing:border-box}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+img,svg,video,canvas,iframe{max-width:100%;height:auto}
+input,textarea,select,button{max-width:100%}
+
+@media (max-width:1200px){
+  .container{width:94%;max-width:1150px}
+  .hero-container{grid-template-columns:minmax(0,1fr) minmax(300px,.8fr)}
+  .projects-grid,.competencies-grid,.certifications-grid,.awards-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media (max-width:900px){
+  .container{width:92%;max-width:850px}
+  .hero-container,.about-grid,.contact-grid{grid-template-columns:1fr}
+  .hero-profile{justify-content:center}
+  .experience-item,.education-item{grid-template-columns:1fr}
+  .projects-grid,.competencies-grid,.certifications-grid,.awards-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media (max-width:700px){
+  .container{width:90%}
+  .section{padding:75px 0}
+  .hero-actions,.cta-actions{flex-direction:column;align-items:stretch}
+  .hero-actions .btn,.cta-actions .btn,.contact-form .btn{width:100%;justify-content:center}
+  .projects-grid,.competencies-grid,.certifications-grid,.awards-grid{grid-template-columns:1fr}
+  .about-details{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+
+@media (max-width:480px){
+  .container{width:88%}
+  .section{padding:65px 0}
+  .hero-title{font-size:clamp(38px,14vw,58px)}
+  .profile-card-image{min-height:350px}
+}
+
+@media (max-width:360px){
+  .container{width:86%}
+  .hero-title{font-size:38px}
+  .section-title{font-size:29px}
+  .profile-card-image{min-height:310px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}

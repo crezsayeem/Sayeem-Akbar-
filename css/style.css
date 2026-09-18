@@ -3829,3 +3829,124 @@ body::after{
   from{rotate:0deg}
   to{rotate:360deg}
 }
+
+
+/* =========================================================
+   PERFORMANCE OVERRIDES
+========================================================= */
+
+img {
+    content-visibility: auto;
+}
+
+.profile-card,
+.project-card,
+.competency-card,
+.certification-card,
+.award-item,
+.experience-main,
+.contact-form-wrapper {
+    transform: translateZ(0);
+}
+
+.hero-glow,
+.hero-glow-one,
+.hero-glow-two,
+.pointer-spot {
+    pointer-events: none;
+}
+
+/* Keep GPU hints limited to elements that actually animate */
+.hero-glow-one,
+.hero-glow-two,
+.hero-grid,
+.pointer-spot,
+.cinematic-cursor {
+    will-change: transform;
+}
+
+/* Avoid expensive blur layers on small/touch devices */
+@media (max-width: 900px), (pointer: coarse) {
+    .pointer-spot {
+        display: none !important;
+    }
+
+    .site-header,
+    .main-navigation {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+
+    .hero-glow {
+        filter: blur(70px) !important;
+    }
+
+    .hero-grid {
+        animation: none !important;
+    }
+
+    .project-card,
+    .competency-card,
+    .certification-card,
+    .award-item,
+    .experience-main {
+        transform: none !important;
+    }
+}
+
+/* Smaller screens: remove unnecessary decorative filters */
+@media (max-width: 600px) {
+    .hero-glow {
+        filter: blur(45px) !important;
+        opacity: .055 !important;
+    }
+
+    body::before {
+        opacity: .025 !important;
+    }
+}
+
+/* Cursor uses transform only; don't animate left/top */
+@media (pointer: fine) {
+    html, body, body * {
+        cursor: none !important;
+    }
+
+    .cinematic-cursor {
+        left: 0 !important;
+        top: 0 !important;
+        margin: 0 !important;
+        transform: translate3d(-100px,-100px,0) translate(-50%,-50%);
+    }
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .cinematic-cursor,
+    .cursor-orbit,
+    .pointer-spot {
+        display: none !important;
+    }
+}
+
+/* Respect dynamic mobile viewport */
+.hero-section,
+.hero {
+    min-height: min(100svh, 900px);
+}
+
+@media (max-width: 900px) {
+    .hero-section,
+    .hero {
+        min-height: auto;
+    }
+}
+
+/* Avoid accidental oversized text/content */
+h1, h2, h3, h4, p, a, span {
+    overflow-wrap: anywhere;
+}
+
+table {
+    max-width: 100%;
+    overflow-x: auto;
+}
